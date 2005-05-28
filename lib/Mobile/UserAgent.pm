@@ -6,12 +6,12 @@ package Mobile::UserAgent;
 # it under the same terms as Perl itself. There is NO warranty; not even for
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 #
-# $Id: UserAgent.pm,v 1.1 2005/01/16 12:26:28 cmanley Exp $
+# $Id: UserAgent.pm,v 1.2 2005/05/28 15:36:08 cmanley Exp $
 #
 use strict;
 use Carp;
 
-our $VERSION = sprintf "%d.%02d", q$Revision: 1.1 $ =~ m/ (\d+) \. (\d+) /xg;
+our $VERSION = sprintf "%d.%02d", q$Revision: 1.2 $ =~ m/ (\d+) \. (\d+) /xg;
 
 
 
@@ -72,7 +72,7 @@ sub _parseUserAgentStandard {
                           (
 
                             # Match known vendor names (this goes into $2)...
-                            (ACER|Alcatel|AUDIOVOX|BlackBerry|CDM|Ericsson|LG\b|LGE|Motorola|MOT|NEC|Nokia|Panasonic|QCI|SAGEM|SAMSUNG|SEC|Sanyo|Sendo|SHARP|SIE|SonyEricsson|Telit|Telit_Mobile_Terminals|TSM)
+                            (ACER|Alcatel|AUDIOVOX|BlackBerry|CDM|Ericsson|LG\b|LGE|Motorola|MOT|NEC|Nokia|Panasonic|PANTECH|PT|QCI|SAGEM|SAMSUNG|SEC|Sanyo|Sendo|SHARP|SIE|SonyEricsson|Telit|Telit_Mobile_Terminals|TSM)
 
                             # optionally followed by an irrelevant space or '-' character...
                             [- ]?
@@ -116,6 +116,9 @@ sub _parseUserAgentStandard {
   elsif ($vendor eq 'MOT') {
     $vendor = 'Motorola';
     $model =~ s/[\._]$//;
+  }
+  elsif (($vendor eq 'PT') || ($vendor eq 'PANTECH')) {
+    $vendor = 'Pantech';
   }
   elsif ($vendor eq 'PHILIPS') {
     $model = uc($model);
