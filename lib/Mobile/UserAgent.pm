@@ -6,12 +6,12 @@ package Mobile::UserAgent;
 # it under the same terms as Perl itself. There is NO warranty; not even for
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 #
-# $Id: UserAgent.pm,v 1.2 2005/05/28 15:36:08 cmanley Exp $
+# $Id: UserAgent.pm,v 1.4 2005/06/20 21:21:30 cmanley Exp $
 #
 use strict;
 use Carp;
 
-our $VERSION = sprintf "%d.%02d", q$Revision: 1.2 $ =~ m/ (\d+) \. (\d+) /xg;
+our $VERSION = sprintf "%d.%02d", q$Revision: 1.4 $ =~ m/ (\d+) \. (\d+) /xg;
 
 
 
@@ -166,6 +166,9 @@ sub _parseUserAgentStandard {
 #  portalmmm/1.0 n21i-10(;ser123456789012345;icc1234567890123456789F)
 #  portalmmm/2.0 N400i(c20;TB)
 #  portalmmm/2.0 P341i(c10;TB)
+#  portalmmm/2.0 L341i(c10;TB)
+#  portalmmm/2.0 S341i(c10;TB)
+#  portalmmm/2.0 SI400i(c10;TB)
 #  DoCoMo/1.0/modelname
 #  DoCoMo/1.0/modelname/cache
 #  DoCoMo/1.0/modelname/cache/unique_id_information
@@ -181,19 +184,21 @@ sub _parseUserAgentImode {
 	'ER' => 'Ericsson',
 	'F'  => 'Fujitsu',
 	'KO' => 'Kokusai', # Hitachi
+  'L'  => 'LG',
 	'M'  => 'Mitsubishi',
 	'P'  => 'Panasonic', # Matsushita
 	'N'  => 'NEC',
 	'NM' => 'Nokia',
 	'R'  => 'Japan Radio',
-	'S'  => 'SAMSUNG',
+	'S'  => 'SAMSUNG', # because of the other vendor codes starting with S below, the regex must try to match them first.
 	'SG' => 'SAGEM',
 	'SH' => 'Sharp',
+	'SI' => 'Siemens',
 	'SO' => 'Sony',
 	'TS' => 'Toshiba');
 
   # Standard i-mode user agents
-  my $pattern = '^(portalmmm|DoCoMo)\/(\d+\.\d+) ((' . join('|', keys(%vendors)) . ')[\w\-]+)\((c(\d+))?';
+  my $pattern = '^(portalmmm|DoCoMo)\/(\d+\.\d+) ((' . join('|', reverse sort keys(%vendors)) . ')[\w\-]+) ?\((c(\d+))?';
   if ($useragent =~ /$pattern/i) {
     my %result = ('vendor'  => $vendors{uc($4)},
                   'model'   => $3,
