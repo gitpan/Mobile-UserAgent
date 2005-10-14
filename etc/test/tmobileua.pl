@@ -1,7 +1,8 @@
 #!/usr/bin/perl -w
-# $Id: tmobileua.pl,v 1.1 2005/01/16 12:26:28 cmanley Exp $
+# $Id: tmobileua.pl,v 1.1 2005/10/14 14:27:19 cmanley Exp $
 use strict;
-use lib qw(../lib);
+use FindBin;
+use lib ("$FindBin::Bin/../../lib");
 use Mobile::UserAgent;
 
 
@@ -10,12 +11,19 @@ my @imode;
 my @mozilla;
 my @rubbish;
 my @bad;
+my @good_useragents;
+
+my @lines;
+if (1){
+ my $h;
+ my $filename = "$FindBin::Bin/../useragents.txt";
+ open($h, "<$filename") || die("Failed to open test useragents file '$filename'.\n");
+ @lines = <$h>;
+ close($h);
+}
 
 
-my $h;
-open($h, '<../useragents.txt') || die "Failed to open test useragents file \"../useragents.txt\".\n";
-my @lines = <$h>;
-close($h);
+
 foreach my $useragent (@lines) {
   chomp($useragent);
   my $ua = new Mobile::UserAgent($useragent);
@@ -49,6 +57,7 @@ foreach my $useragent (@lines) {
     else {
       die("Oops!\n");
     }
+    push(@good_useragents, $useragent);
   }
   else {
     push(@bad, $useragent);
@@ -61,6 +70,7 @@ file_put_contents('good_mozilla.txt', join("\n",@mozilla));
 file_put_contents('good_rubbish.txt', join("\n",@rubbish));
 file_put_contents('good.txt', join("\n", @standard, @imode, @mozilla, @rubbish));
 file_put_contents('bad.txt', join("\n",@bad));
+file_put_contents('good_useragents.txt', join("\n", @good_useragents));
 
 
 

@@ -6,6 +6,6 @@ WriteMakefile(
     'VERSION_FROM' => 'lib/Mobile/UserAgent.pm',
     'AUTHOR' => 'Craig Manley',
     'ABSTRACT' => 'Mobile user agent string parsing class.',
-    'PREREQ_PM'	=> {},
+    'PREREQ_PM'	=> {'Class::Singleton' => 0},
     'dist' => {COMPRESS => 'gzip -9f', SUFFIX => 'gz'}
 );

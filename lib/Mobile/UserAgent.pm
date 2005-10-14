@@ -6,12 +6,12 @@ package Mobile::UserAgent;
 # it under the same terms as Perl itself. There is NO warranty; not even for
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 #
-# $Id: UserAgent.pm,v 1.4 2005/06/20 21:21:30 cmanley Exp $
+# $Id: UserAgent.pm,v 1.5 2005/09/25 14:29:18 cmanley Exp $
 #
 use strict;
 use Carp;
 
-our $VERSION = sprintf "%d.%02d", q$Revision: 1.4 $ =~ m/ (\d+) \. (\d+) /xg;
+our $VERSION = sprintf "%d.%02d", q$Revision: 1.5 $ =~ m/ (\d+) \. (\d+) /xg;
 
 
 
@@ -184,7 +184,7 @@ sub _parseUserAgentImode {
 	'ER' => 'Ericsson',
 	'F'  => 'Fujitsu',
 	'KO' => 'Kokusai', # Hitachi
-  'L'  => 'LG',
+	'L'  => 'LG',
 	'M'  => 'Mitsubishi',
 	'P'  => 'Panasonic', # Matsushita
 	'N'  => 'NEC',
@@ -200,16 +200,26 @@ sub _parseUserAgentImode {
   # Standard i-mode user agents
   my $pattern = '^(portalmmm|DoCoMo)\/(\d+\.\d+) ((' . join('|', reverse sort keys(%vendors)) . ')[\w\-]+) ?\((c(\d+))?';
   if ($useragent =~ /$pattern/i) {
-    my %result = ('vendor'  => $vendors{uc($4)},
-                  'model'   => $3,
-                  'version' => $2);
+    my $vendor  = $vendors{uc($4)};
+    my $model   = $3;
+    my $version = $2;
+    my $cache;
     if (defined($6) && length($6)) {
-      $result{'imode_cache'} = $6 + 0;
+      $cache = $6 + 0;
     }
     else {
-      $result{'imode_cache'} = 5;
+      $cache = 5;
     }
-    return \%result;
+
+    # Chop off trailing cache size from model name (e.g. N21i-10 becomes N21i).
+    if (defined($model)) {
+      $model =~ s/-\d+$//;
+    }
+
+    return {'vendor'  => $vendor,
+            'model'   => $model,
+            'version' => $version,
+            'imode_cache' => $cache};
   }
 
   # DoCoMo HTML i-mode user agents
